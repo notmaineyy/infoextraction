@@ -1,8 +1,14 @@
 # infoextraction
 
-This repository contains codes for a web app made for information extraction tools.
+This repository contains codes to train NER models to extract important details from documents (news articles) quickly and precisely and a webapp incorporating information extraction tools developed.
 
-Tools included are:
+Important details to be extracted:<br>
+- People <br>
+- Locations<br>
+- Organisations<br>
+- Relationships<br>
+
+Tools included in the webapp are:
 1. Named-Entity Recognition
 2. Term Frequency-Inverse Document Frequency 
 3. Dependency Parser
