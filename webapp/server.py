@@ -13,7 +13,7 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 import os
 import PyPDF2
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 import numpy as np
 from sklearn.feature_extraction import text
 from wordcloud import WordCloud
@@ -36,9 +36,9 @@ Markdown(app)
 def pdf2text(pdf):
     '''Iterate over pages and extract text'''
     text = ''
-    for i in range(pdf.getNumPages()):
-        page = pdf.getPage(i)
-        text = text + page.extractText()
+    for i in range(len(pdf.pages)):
+        page = pdf.pages[i]
+        text = text + page.extract_text()
     return text
  
 def stem_tokenize(document):
@@ -52,7 +52,7 @@ def tokenize(document):
     return tokens
  
 def build_corpus_from_dir(corpus, file_name):
-    pdf = PdfFileReader(file_name,'rb')
+    pdf = PdfReader(file_name,'rb')
     document = pdf2text(pdf)
     corpus.append(document)
     return corpus
@@ -160,7 +160,7 @@ def upload_file():
       if tf==True:
         tfIdf = tfIdfVectorizer.fit(corpus)
       indices = np.argsort(tfIdfVectorizer.idf_)[::-1]
-      a = tfIdfVectorizer.get_feature_names()
+      a = tfIdfVectorizer.get_feature_names_out() ()
       tfresults=[]
       for i in range(numOfFiles):
           tdm = tfIdfVectorizer.transform([all_text[i]])
@@ -172,7 +172,7 @@ def upload_file():
           phrase_score_dict = dict(phrase_score)
           wc = WordCloud(mode='RGBA',background_color='white').fit_words(phrase_score_dict)
           file_name = 'wordcloud'+str(i)+'.png'
-          save_name = 'static\wordcloud' + str(i) + '.png'
+          save_name = 'webapp/static/wordcloud' + str(i) + '.png'
           tfresults.append(file_name)
           wc.to_file(save_name)
           #filename = Image.open(file_name)
@@ -221,7 +221,7 @@ def upload_file_tf():
         tfIdfVectorizer=TfidfVectorizer(tokenizer=tokenize,stop_words=stop)
       tfIdf = tfIdfVectorizer.fit(corpus)
       indices = np.argsort(tfIdfVectorizer.idf_)[::-1]
-      a = tfIdfVectorizer.get_feature_names()
+      a = tfIdfVectorizer.get_feature_names_out()
       results=[]
       for i in range(numOfFiles):
           tdm = tfIdfVectorizer.transform([all_text[i]])
@@ -231,9 +231,9 @@ def upload_file_tf():
           sorted_phrase_scores = sorted(phrase_scores, key=lambda t: t[1] * -1)
           phrase_score = [(a[word_id], score) for (word_id, score) in sorted_phrase_scores]
           phrase_score_dict = dict(phrase_score)
-          wc = WordCloud(max_words=count, font_path = 'SourceHanSerif\SourceHanSerifK-Light.otf', mode='RGBA',background_color='white').fit_words(phrase_score_dict)
+          wc = WordCloud(max_words=count, font_path = 'webapp\SourceHanSerif\SourceHanSerifK-Light.otf', mode='RGBA',background_color='white').fit_words(phrase_score_dict)
           file_name = 'wordcloud'+str(i)+'.png'
-          save_name = 'static\wordcloud' + str(i) + '.png'
+          save_name = 'webapp/static/wordcloud' + str(i) + '.png'
           results.append(file_name)
           wc.to_file(save_name)
           #filename = Image.open(file_name)
@@ -261,7 +261,7 @@ def upload_file_ner():
       if lang_chosen == "English":
         nlp = spacy.load('en_core_web_trf')
       elif lang_chosen == "Indonesian":
-        nlp = spacy.load('nlp_id_checkpoint_2022_09_22_06')
+        nlp = spacy.load('webapp/nlp_id_checkpoint_2022_09_22_06')
       else: 
         nlp = spacy.load('zh_core_web_trf')
       results=[]
